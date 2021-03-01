@@ -1,11 +1,11 @@
 import App from "./app";
-import { connect } from "./database/database";
+import { connect, connection } from "./database/database";
 import ApiController from "./controllers/api.controller";
 
 /**
  * Connect to database and start express server.
  */
-const server = new App(new ApiController());
+const server = new App(new ApiController(connection));
 server.app.listen(server.app.get("port"), async () => {
   try {
     await connect();

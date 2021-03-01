@@ -1,7 +1,14 @@
-import { connection } from "../database/database";
+import { Database } from "sqlite3";
+
 import { StockPrice, PercentChangeDay, AverageClosingPrice } from "types";
 
-export default class ApiService {
+export default class ApiService implements IApiService {
+  private connection: Database;
+
+  constructor(connection: Database) {
+    this.connection = connection;
+  }
+
   /**
    * Get stock info
    */
@@ -30,7 +37,7 @@ export default class ApiService {
         ${_limit}
         ${_query};
       `;
-      return connection.all(sql, (err, rows: StockPrice[]) => {
+      return this.connection.all(sql, (err, rows: StockPrice[]) => {
         if (err) {
           return reject(err);
         }
@@ -51,7 +58,7 @@ export default class ApiService {
         AND date >= '${start}'
         AND date <= '${end}';
       `;
-      return connection.get(sql, (err, val) => {
+      return this.connection.get(sql, (err, val) => {
         if (err) {
           return reject(err);
         }
@@ -81,7 +88,7 @@ export default class ApiService {
         LIMIT ${limit};
       `;
 
-      return connection.all(sql, (err: Error, rows: any[]) => {
+      return this.connection.all(sql, (err: Error, rows: any[]) => {
         if (err) {
           return reject(err);
         }

@@ -24,11 +24,9 @@
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "csv-parser": "^2.3.3",
     "express": "^4.17.1",
     "express-validator": "^6.5.0",
-    "sqlite3": "^4.2.0",
-    "tinyqueue": "^2.0.3"
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.17.1",
@@ -43,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "concurrently": "^5.0.0",
+    "csv-parser": "^2.3.3",
     "eslint": "^6.4.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",

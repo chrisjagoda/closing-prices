@@ -1,5 +1,6 @@
 import { Database } from "sqlite3";
 
+import IApiService from "./api.service.interface";
 import { StockPrice, PercentChangeDay, AverageClosingPrice } from "types";
 
 export default class ApiService implements IApiService {

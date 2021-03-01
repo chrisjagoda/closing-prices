@@ -1,19 +1,13 @@
 import App from "./app";
-import { connect, connection } from "./database/database";
-import ApiController from "./controllers/api.controller";
+import dotenv from "dotenv";
 
 /**
- * Connect to database and start express server.
+ * Start express server.
  */
-const server = new App(new ApiController(connection));
+dotenv.config();
+ 
+const server = new App();
 server.app.listen(server.app.get("port"), async () => {
-  try {
-    await connect();
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-
   console.log(
     "Server is running at http://localhost:%d in %s mode",
     server.app.get("port"),

@@ -1,17 +1,14 @@
 import request from "supertest";
 
 import App from "../src/app";
-import ApiController from "../src/controllers/api.controller";
 import { connect, connection } from "../src/database/database";
 
 let server: App;
-let apiController: ApiController;
 
 beforeAll(async () => {
   await connect();
 
-  apiController = new ApiController(connection);
-  server = new App(apiController);
+  server = new App();
 
   await (() => new Promise<void>((resolve, reject) => {
     connection.run("CREATE TABLE closing_prices(company_ticker TEXT, date TEXT, closing_price REAL);", (err) => {

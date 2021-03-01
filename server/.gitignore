@@ -38,3 +38,6 @@ yarn.lock
 
 # Build files
 dist
+
+# Environment
+*.env

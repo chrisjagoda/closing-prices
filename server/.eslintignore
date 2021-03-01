@@ -8,5 +8,6 @@ coverage/*
 /src/public/
 # custom definition files
 /src/types/
-# setup file
-setup.js
+# knex files
+/migrations/
+/seeds/

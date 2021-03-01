@@ -2,7 +2,6 @@ import express, { Application } from "express";
 import compression from "compression";
 
 import ApiController from "./controllers/api.controller";
-import { connect } from "./database/database";
 import * as apiValidator from "./validators/api.validator";
 
 export default class App {
@@ -10,21 +9,14 @@ export default class App {
   apiController: ApiController;
 
   constructor() {
-    connect()
-    .then(connection => {
-      this.apiController = new ApiController(connection);
-
-      this.initializeRoutes();
-    }).catch(err => {
-      console.error(err);
-      process.exit(1);
-    });
-
+    this.apiController = new ApiController();
     this.app = express();
 
     // Express configuration
     this.app.set("port", process.env.PORT || 3000);
     this.app.use(compression());
+    
+    this.initializeRoutes();
   }
 
   /**

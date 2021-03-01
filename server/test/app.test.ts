@@ -1,74 +1,77 @@
 import request from "supertest";
 
 import App from "../src/app";
-import { connect, connection } from "../src/database/database";
+import connection from "../src/database/database";
 
 let server: App;
 
 beforeAll(async () => {
-  await connect();
-
+  console.log("once");
   server = new App();
 
-  await (() => new Promise<void>((resolve, reject) => {
-    connection.run("CREATE TABLE closing_prices(company_ticker TEXT, date TEXT, closing_price REAL);", (err) => {
-      if (err) {
-        return reject(`Error creating closing prices table: ${err.message}`);
-      }
-    
-      console.log("Created closing prices table.");
-      resolve();
-    });
-  }))();
-  await (() => new Promise<void>((resolve, reject) => {
-    connection.run(`
-      INSERT INTO closing_prices(company_ticker, date, closing_price)
-      VALUES
-      ('AAPL', '1999-01-04', '15.25'),
-      ('AAPL', '1999-01-05', '16.25'),
-      ('AAPL', '1999-01-06', '16.50'),
-      ('AAPL', '1999-01-07', '16.75'),
-      ('AAPL', '1999-01-08', '16'),
-      ('AMZN', '1999-01-04', '5.25'),
-      ('AMZN', '1999-01-05', '6.25'),
-      ('AMZN', '1999-01-06', '7.25'),
-      ('AMZN', '1999-01-07', '8.25'),
-      ('AMZN', '1999-01-08', '6.75'),
-      ('GOOG', '1999-01-04', '3.25'),
-      ('GOOG', '1999-01-05', '4.25'),
-      ('GOOG', '1999-01-06', '2.25'),
-      ('GOOG', '1999-01-07', '4.75'),
-      ('GOOG', '1999-01-08', '5'),
-      ('FB', '1999-01-04', '2.25'),
-      ('FB', '1999-01-05', '1.25'),
-      ('FB', '1999-01-06', '5.25'),
-      ('FB', '1999-01-07', '3.25'),
-      ('FB', '1999-01-08', '1.5'),
-      ('NFLX', '1999-01-04', '1.25'),
-      ('NFLX', '1999-01-05', '3.25'),
-      ('NFLX', '1999-01-06', '5.25'),
-      ('NFLX', '1999-01-07', '3.25'),
-      ('NFLX', '1999-01-08', '4.25');
-    `, (err) => {
-      if (err) {
-        return reject(`Error inserting value: ${err.message}`);
-      }
+  await connection.schema.createTableIfNotExists("stock_price", (table: any) => {
+    table.increments();
+    table.string("company_ticker");
+    table.string("date");
+    table.float("closing_price");
+  });
 
-      console.log("Inserted values.");
-      resolve();
-    });
-  }))();
+  await connection.schema.raw(`
+    CREATE VIEW IF NOT EXISTS percent_change_day AS
+    SELECT
+      date start_date,
+      LEAD (date, 1) OVER w end_date,
+      company_ticker,
+      closing_price start_closing_price,
+      LEAD (closing_price, 1) OVER w end_closing_price,
+      (LEAD (closing_price, 1) OVER w - closing_price) / closing_price percent_change_day
+    FROM
+      stock_price
+    WINDOW w AS (
+      PARTITION BY company_ticker
+      ORDER BY date
+    )
+    ORDER BY date, company_ticker ASC;
+  `);
+
+  await connection("stock_price").insert([
+    {company_ticker: "AAPL", date: "1999-01-04", closing_price: 15.25},
+    {company_ticker: "AAPL", date: "1999-01-05", closing_price: 16.25},
+    {company_ticker: "AAPL", date: "1999-01-06", closing_price: 16.50},
+    {company_ticker: "AAPL", date: "1999-01-07", closing_price: 16.75},
+    {company_ticker: "AAPL", date: "1999-01-08", closing_price: 16},
+    {company_ticker: "AMZN", date: "1999-01-04", closing_price: 5.25},
+    {company_ticker: "AMZN", date: "1999-01-05", closing_price: 6.25},
+    {company_ticker: "AMZN", date: "1999-01-06", closing_price: 7.25},
+    {company_ticker: "AMZN", date: "1999-01-07", closing_price: 8.25},
+    {company_ticker: "AMZN", date: "1999-01-08", closing_price: 6.75},
+    {company_ticker: "GOOG", date: "1999-01-04", closing_price: 3.25},
+    {company_ticker: "GOOG", date: "1999-01-05", closing_price: 4.25},
+    {company_ticker: "GOOG", date: "1999-01-06", closing_price: 2.25},
+    {company_ticker: "GOOG", date: "1999-01-07", closing_price: 4.75},
+    {company_ticker: "GOOG", date: "1999-01-08", closing_price: 5},
+    {company_ticker: "FB", date: "1999-01-04", closing_price: 2.25},
+    {company_ticker: "FB", date: "1999-01-05", closing_price: 1.25},
+    {company_ticker: "FB", date: "1999-01-06", closing_price: 5.25},
+    {company_ticker: "FB", date: "1999-01-07", closing_price: 3.25},
+    {company_ticker: "FB", date: "1999-01-08", closing_price: 1.5},
+    {company_ticker: "NFLX", date: "1999-01-04", closing_price: 1.25},
+    {company_ticker: "NFLX", date: "1999-01-05", closing_price: 3.25},
+    {company_ticker: "NFLX", date: "1999-01-06", closing_price: 5.25},
+    {company_ticker: "NFLX", date: "1999-01-07", closing_price: 3.25},
+    {company_ticker: "NFLX", date: "1999-01-08", closing_price: 4.25}
+  ]);
 });
 
 describe("GET /random-url", () => {
-  it("should return 404", (done) => {
-    request(server.app).get("/reset")
+  test("should return 404", (done) => {
+    request(server.app).get("/random-url")
       .expect(404, done);
   });
 });
 
 describe("GET /api/v1/search", () => {
-  it("should return 200 status and all results", (done) => {
+  test("should return 200 status and all results", (done) => {
     request(server.app).get("/api/v1/search")
       .expect(200)
       .then(({ body }) => {
@@ -77,10 +80,8 @@ describe("GET /api/v1/search", () => {
         done();
       });
   });
-});
 
-describe("GET /api/v1/search", () => {
-  it("should return first date represented in results", (done) => {
+  test("should return first date represented in results", (done) => {
     request(server.app).get("/api/v1/search?by=date&fields=date&sort=asc&limit=1")
       .expect(200)
       .then(({ body }) => {
@@ -89,10 +90,8 @@ describe("GET /api/v1/search", () => {
         done();
       });
   });
-});
 
-describe("GET /api/v1/search", () => {
-  it("should return last date represented in results", (done) => {
+  test("should return last date represented in results", (done) => {
     request(server.app).get("/api/v1/search?by=date&fields=date&sort=desc&limit=1")
       .expect(200)
       .then(({ body }) => {

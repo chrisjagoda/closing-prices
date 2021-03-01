@@ -2,9 +2,9 @@
 exports.up = async function(knex) {
   await knex.schema.createTableIfNotExists("stock_price", table => {
     table.increments();
+    table.float("closing_price");
     table.string("company_ticker");
     table.string("date");
-    table.float("closing_price");
   });
 
   await knex.schema.raw(`
@@ -27,7 +27,7 @@ exports.up = async function(knex) {
 };
 
 exports.down = async function(knex) {
-  await knex.schema.dropTable('stock_price');
+  await knex.schema.dropTable("stock_price");
 
-  await knex.schema.raw(`DROP VIEW IF EXISTS percent_change_day`);
+  await knex.schema.raw("DROP VIEW IF EXISTS percent_change_day");
 };

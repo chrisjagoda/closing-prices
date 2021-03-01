@@ -1,6 +1,5 @@
 import { Response, Request, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import { Database } from "sqlite3";
 
 import ApiService from "../services/api.service";
 import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } from "types";
@@ -8,8 +7,8 @@ import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } fr
 export default class ApiController {
   private apiService: ApiService;
 
-  constructor(connection: Database) {
-    this.apiService = new ApiService(connection);
+  constructor() {
+    this.apiService = new ApiService();
   }
 
   /**

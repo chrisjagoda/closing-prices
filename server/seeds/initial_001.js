@@ -11,18 +11,18 @@ exports.seed = async function(knex) {
     const data = [];
 
     fs.createReadStream("../closing_prices.csv")
-    .pipe(csv())
-    .on("data", ({closing_price, company_ticker, date}) => {
+      .pipe(csv())
+      .on("data", ({closing_price, company_ticker, date}) => {
 
-      data.push({
-        closing_price: parseFloat(closing_price),
-        company_ticker,
-        date
+        data.push({
+          closing_price: parseFloat(closing_price),
+          company_ticker,
+          date
+        });
+      })
+      .on("end", async () => {
+        const results = await knex.batchInsert("stock_price", data, BATCH_SIZE);
+        resolve(results);
       });
-    })
-    .on("end", async () => {
-      const results = await knex.batchInsert("stock_price", data, BATCH_SIZE);
-      resolve(results);
-    });
   });
 };

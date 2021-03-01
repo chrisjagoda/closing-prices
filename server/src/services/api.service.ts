@@ -7,8 +7,6 @@ export default class ApiService implements ApiServiceInterface {
    * Get stock info
    */
   async search(fields: string, by: string, sort: string, limit: number, date: string, company_ticker: string): Promise<Error | StockPrice[]> {
-    const queryBuilder = connection<StockPrice>("stock_price");
-
     let where = {};
     if (date) {
       where = { ...where, date };
@@ -16,7 +14,8 @@ export default class ApiService implements ApiServiceInterface {
     if (company_ticker) {
       where = { ...where, company_ticker };
     }
-    
+
+    const queryBuilder = connection<StockPrice>("stock_price");
     if (Object.keys(where).length > 0) {
       queryBuilder.where(where);
     }

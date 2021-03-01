@@ -5,8 +5,8 @@ This is a simple API written in Typescript for performing some basic retrievals 
 ## Requirements
 
 These downloads are required to run the project:
-- Node.js (https://nodejs.org/en/download/)
-- SQLite (https://www.sqlite.org/download.html)
+- Node.js (https://nodejs.org/en/download/) v11+
+- SQLite (https://www.sqlite.org/download.html) v3+
 
 Once these have been downloaded and installed run `npm install` to install the necessary npm packages to run and test the project.
 Unit tests and coverage checks can be run with `npm run test`.

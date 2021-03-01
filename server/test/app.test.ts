@@ -1,10 +1,8 @@
 import request from "supertest";
-import { Database } from "sqlite3";
 
 import App from "../src/app";
 import ApiController from "../src/controllers/api.controller";
 import { connect, connection } from "../src/database/database";
-import { response } from "express";
 
 let server: App;
 let apiController: ApiController;
@@ -12,10 +10,10 @@ let apiController: ApiController;
 beforeAll(async () => {
   await connect();
 
-  apiController = new ApiController();
+  apiController = new ApiController(connection);
   server = new App(apiController);
 
-  await (() => new Promise((resolve, reject) => {
+  await (() => new Promise<void>((resolve, reject) => {
     connection.run("CREATE TABLE closing_prices(company_ticker TEXT, date TEXT, closing_price REAL);", (err) => {
       if (err) {
         return reject(`Error creating closing prices table: ${err.message}`);
@@ -25,7 +23,7 @@ beforeAll(async () => {
       resolve();
     });
   }))();
-  await (() => new Promise((resolve, reject) => {
+  await (() => new Promise<void>((resolve, reject) => {
     connection.run(`
       INSERT INTO closing_prices(company_ticker, date, closing_price)
       VALUES

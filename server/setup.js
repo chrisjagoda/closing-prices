@@ -9,7 +9,7 @@ const connection = new sqlite3.Database(path.resolve(__dirname, "./db/stock_pric
   }
 
   console.log("Connected to stock price database.");
-  
+
   createTable()
   .then(createPercentChangeDayView)
   .then(readAndInsertValues)

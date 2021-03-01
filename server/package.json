@@ -1,10 +1,10 @@
 {
-  "name": "take-home-exercise-chrisjagoda",
+  "name": "closing-prices",
   "version": "1.0.0",
-  "description": "Capital Group software engineer take home exercise",
+  "description": "Closing prices API",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/capgroup-ig-tech-interviews/take-home-exercise-chrisjagoda.git"
+    "url": "git+https://github.com/chrisjagoda/closing-prices.git"
   },
   "author": "Chris Jagoda",
   "scripts": {

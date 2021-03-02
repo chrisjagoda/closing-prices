@@ -1,11 +1,8 @@
 import App from "./app";
-import dotenv from "dotenv";
 
 /**
  * Start express server.
  */
-dotenv.config();
- 
 const server = new App();
 server.app.listen(server.app.get("port"), async () => {
   console.log(

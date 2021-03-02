@@ -13,7 +13,7 @@ Unit tests and coverage checks can be run with `npm run test`.
 
 ## Usage
 
-Once the requirements steps above have been complete, you must run the setup script with `npm run setup` to create the SQLite database and table and populate the table with the data from the closing_prices.csv file. This step may take a few minutes to complete.
+Once the requirements steps above have been complete, you must run the database migration scripts with `npm run migrate:up` and `npm run seed:run` to seed the database with the data from the closing_prices.csv file.
 After completion, the project can be run and built in one step with `npm run start`.
 The app can also be built and run in debug mode with hot-reloading using nodemon with `npm run debug`.
 To see a full list of commands check in the package.json file under "scripts". 

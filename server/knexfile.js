@@ -1,9 +1,13 @@
+const dotenv = require("dotenv");
+
+dotenv.config();
+
 module.exports = {
 
   development: {
-    client: "sqlite3",
+    client: process.env.DATABASE_CLIENT,
     connection: {
-      filename: "stock_price.sqlite3"
+      filename: process.env.DATABASE_FILENAME
     }
   },
 

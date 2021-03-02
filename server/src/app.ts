@@ -15,7 +15,7 @@ export default class App {
     // Express configuration
     this.app.set("port", process.env.PORT || 3000);
     this.app.use(compression());
-    
+
     this.initializeRoutes();
   }
 

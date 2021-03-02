@@ -22,8 +22,8 @@ export default class ApiController {
       res.status(status).send({ status, errors });
     } else {
       try {
-        const { fields, by, sort, limit, date, company_ticker } = req.query as SearchRequest;
-        const results = await this.apiService.search(fields, by, sort, limit, date, company_ticker);
+        const { fields, by, sort, limit, date, company_tickers } = req.query as SearchRequest;
+        const results = await this.apiService.search(fields, by, sort, limit, date, company_tickers);
         res.send(results);
       } catch (err) {
         console.error(err.message);
@@ -45,8 +45,8 @@ export default class ApiController {
       res.status(status).send({ status, errors });
     } else {
       try {
-        const { company_ticker, start, end } = req.query as AverageClosingPriceRequest;
-        const results = await this.apiService.averageClosingPrice(company_ticker, start, end);
+        const { company_tickers, start, end } = req.query as AverageClosingPriceRequest;
+        const results = await this.apiService.averageClosingPrice(company_tickers, start, end);
         res.send(results);
       } catch (err) {
         console.error(err.message);
@@ -68,8 +68,8 @@ export default class ApiController {
       res.status(status).send({ status, errors });
     } else {
       try {
-        const { limit, sort } = req.query as PercentChangeDayRequest;
-        const results = await this.apiService.percentChangeDay(limit, sort);
+        const { limit, sort, company_tickers } = req.query as PercentChangeDayRequest;
+        const results = await this.apiService.percentChangeDay(limit, sort, company_tickers);
         res.send(results);
       } catch (err) {
         console.error(err.message);

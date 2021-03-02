@@ -8,14 +8,13 @@ exports.up = async function(knex) {
   });
 
   await knex.schema.raw(`
-    CREATE VIEW IF NOT EXISTS percent_change_day AS
+    CREATE VIEW IF NOT EXISTS change_day AS
     SELECT
       date start_date,
       LEAD (date, 1) OVER w end_date,
       company_ticker,
       closing_price start_closing_price,
-      LEAD (closing_price, 1) OVER w end_closing_price,
-      (LEAD (closing_price, 1) OVER w - closing_price) / closing_price percent_change_day
+      LEAD (closing_price, 1) OVER w end_closing_price
     FROM
       stock_price
     WINDOW w AS (
@@ -29,5 +28,5 @@ exports.up = async function(knex) {
 exports.down = async function(knex) {
   await knex.schema.dropTable("stock_price");
 
-  await knex.schema.raw("DROP VIEW IF EXISTS percent_change_day");
+  await knex.schema.raw("DROP VIEW IF EXISTS change_day");
 };

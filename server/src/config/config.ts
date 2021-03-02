@@ -9,4 +9,4 @@ export const databaseConfig = {
     filename: process.env.NODE_ENV === "test" ? ":memory:" : path.resolve(__dirname, `../../${process.env.DATABASE_FILENAME}`),
   }),
   debug: process.env.NODE_ENV !== "production"
-}
+};

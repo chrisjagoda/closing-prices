@@ -57,7 +57,7 @@ sys     0m0.031s
 2. What was the closing price of Facebook on January 1st, 2018?
 
 ```bash
-⇒  time curl "http://localhost:3000/api/v1/search?company_ticker=FB&date=2018-01-01&fields=closing_price"
+⇒  time curl "http://localhost:3000/api/v1/search?company_tickers=FB&date=2018-01-01&fields=closing_price"
 
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -71,7 +71,7 @@ sys     0m0.015s
 3. What was the average closing price of Amazon in the month of July 2015?
 
 ```bash
-⇒  time curl "http://localhost:3000/api/v1/averageClosingPrice?company_ticker=AMZN&start=2015-07-01&end=2015-07-31"
+⇒  time curl "http://localhost:3000/api/v1/averageClosingPrice?company_tickers=AMZN&start=2015-07-01&end=2015-07-31"
 
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed

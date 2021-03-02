@@ -23,11 +23,11 @@ export const search = [
     .not().isEmpty()
     .trim()
     .matches(/(asc)|(desc)/i),
-  query("company_ticker")
+  query("company_tickers")
     .optional()
     .not().isEmpty()
     .trim()
-    .matches(/(GOOG)|(AAPL)|(AMZN)|(FB)|(NFLX)/),
+    .matches(/^[a-zA-Z,]*$/),
   query("date")
     .optional()
     .not().isEmpty()
@@ -39,14 +39,15 @@ export const search = [
     .not().isEmpty()
     .trim()
     .isInt({ min: 1, max: 100000 })
-    .toInt()
+    .toInt(),
 ];
 
 export const averageClosingPrice = [
-  query("company_ticker")
+  query("company_tickers")
+    .optional()
     .not().isEmpty()
     .trim()
-    .matches(/(GOOG)|(AAPL)|(AMZN)|(FB)|(NFLX)/),
+    .matches(/^[a-zA-Z,]*$/),
   query("start")
     .not().isEmpty()
     .trim()
@@ -56,7 +57,7 @@ export const averageClosingPrice = [
     .not().isEmpty()
     .trim()
     .isISO8601()
-    .matches(/\d{4}-\d{2}-\d{2}/)
+    .matches(/\d{4}-\d{2}-\d{2}/),
 ];
 
 export const percentChangeDay = [
@@ -70,5 +71,10 @@ export const percentChangeDay = [
     .optional()
     .not().isEmpty()
     .trim()
-    .matches(/(asc)|(desc)/i)
+    .matches(/(asc)|(desc)/i),
+  query("company_tickers")
+    .optional()
+    .not().isEmpty()
+    .trim()
+    .matches(/^[a-zA-Z,]*$/),
 ];

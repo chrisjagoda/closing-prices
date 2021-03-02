@@ -9,5 +9,6 @@ coverage/*
 # custom definition files
 /src/types/
 # knex files
+knexfile.js
 /migrations/
 /seeds/

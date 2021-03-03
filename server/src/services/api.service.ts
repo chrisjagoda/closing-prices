@@ -6,21 +6,17 @@ export default class ApiService implements ApiServiceInterface {
   /**
    * Get stock info
    */
-  async search(fields: string, by: string, sort: string, limit: number, date: string, company_tickers: string): Promise<Error | StockPrice[]> {
+  async search(fields: string, by: string, sort: string, limit: number, date: string, company_tickers: string[]): Promise<Error | StockPrice[]> {
     const queryBuilder = connection<StockPrice>("stock_price");
     const where: any = {};
 
     if (date) {
       where.date = date;
     }
-    if (company_tickers) {
-      const split = company_tickers.split(",").filter(value => value !== "").map(value => value.toUpperCase());
-
-      if (split.length > 1) {
-        queryBuilder.whereIn("company_ticker", split);
-      } else {
-        where.company_ticker = split[0];
-      }
+    if (company_tickers.length === 1) {
+      where.company_ticker = company_tickers[0];
+    } else if (company_tickers.length > 1) {
+      queryBuilder.whereIn("company_ticker", company_tickers);
     }
     if (Object.keys(where).length > 0) {
       queryBuilder.where(where);
@@ -38,16 +34,13 @@ export default class ApiService implements ApiServiceInterface {
   /**
    * Get average closing price over a period of time
    */
-  async averageClosingPrice(company_tickers: string, start: string, end: string): Promise<Error | AverageClosingPrice> {
+  async averageClosingPrice(start: string, end: string, company_tickers: string[]): Promise<Error | AverageClosingPrice> {
     const queryBuilder = connection<StockPrice>("stock_price");
 
-    if (company_tickers) {
-      const split = company_tickers.split(",").filter(value => value !== "").map(value => value.toUpperCase());
-      if (split.length > 1) {
-        queryBuilder.whereIn("company_ticker", split);
-      } else {
-        queryBuilder.where("company_ticker", split[0]);
-      }
+    if (company_tickers.length === 1) {
+      queryBuilder.where("company_ticker", company_tickers[0]);
+    } else if (company_tickers.length > 1) {
+      queryBuilder.whereIn("company_ticker", company_tickers);
     }
 
     return await queryBuilder
@@ -60,15 +53,13 @@ export default class ApiService implements ApiServiceInterface {
   /**
    * Get stock closing price percent change from one day to next
    */
-  async percentChangeDay(limit: number, sort: string, company_tickers: string): Promise<Error | PercentChangeDay[]> {
+  async percentChangeDay(limit: number, sort: string, company_tickers: string[]): Promise<Error | PercentChangeDay[]> {
     let where = "";
-    if (company_tickers) {
-      const split = company_tickers.split(",").filter(value => value !== "").map(value => value.toUpperCase());
-      if (split.length > 1) {
-        where = `WHERE company_ticker IN ('${split.join("','")}')`;
-      } else {
-        where = `WHERE company_ticker = '${split[0]}'`;
-      }
+
+    if (company_tickers.length === 1) {
+      where = `WHERE company_ticker = '${company_tickers[0]}'`;
+    } else if (company_tickers.length > 1) {
+      where = `WHERE company_ticker IN ('${company_tickers.join("','")}')`;
     }
 
     return await connection.raw(`

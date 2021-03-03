@@ -2,8 +2,8 @@ import { Response, Request, NextFunction } from "express";
 import { validationResult } from "express-validator";
 
 import ApiService from "../services/api.service";
-import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } from "types";
-import { parseCompanyTickers } from "../utils/utils";
+import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } from "../models/";
+import { AverageClosingPriceQuery, PercentChangeDayQuery, SearchQuery } from "types";
 
 export default class ApiController {
   private apiService: ApiService;
@@ -17,21 +17,23 @@ export default class ApiController {
    * Search API.
    */
   search = async (req: Request, res: Response, next: NextFunction) => {
-    const errors = Object.values(validationResult(req).mapped());
-    if (errors.length > 0) {
-      const status = 400;
-      res.status(status).send({ status, errors });
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { fields, by, sort, limit, date, company_tickers } = req.query as SearchRequest;
-        const results = await this.apiService.search(fields, by, sort, limit, date, parseCompanyTickers(company_tickers));
-        res.send(results);
+        const { by, sort, date, limit, companyTickers, fields } = req.query as SearchQuery;
+        const request = new SearchRequest(by, sort, date, limit, companyTickers, fields);
+        const response = await this.apiService.search(request);
+
+        res.send(response);
       } catch (err) {
         console.error(err.message);
-        res.status(500).send({errors: ["Internal Server Error."]});
+        res.status(500).send({ errors: ["Internal Server Error."]});
       }
     }
-  
+
     next();
   }
   
@@ -40,21 +42,23 @@ export default class ApiController {
    * Average closing price API.
    */
   averageClosingPrice = async (req: Request, res: Response, next: NextFunction) => {
-    const errors = Object.values(validationResult(req).mapped());
-    if (errors.length > 0) {
-      const status = 400;
-      res.status(status).send({ status, errors });
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { company_tickers, start, end } = req.query as AverageClosingPriceRequest;
-        const results = await this.apiService.averageClosingPrice(start, end, parseCompanyTickers(company_tickers));
-        res.send(results);
+        const { start, end, companyTickers } = req.query as AverageClosingPriceQuery;
+        const request = new AverageClosingPriceRequest(start, end, companyTickers);
+        const response = await this.apiService.averageClosingPrice(request);
+
+        res.send(response);
       } catch (err) {
         console.error(err.message);
-        res.status(500).send({errors: ["Internal Server Error."]});
+        res.status(500).send({ errors: ["Internal Server Error."]});
       }
     }
-  
+
     next();
   }
   
@@ -63,21 +67,23 @@ export default class ApiController {
    * Percent change API.
    */
   percentChangeDay = async (req: Request, res: Response, next: NextFunction) => {
-    const errors = Object.values(validationResult(req).mapped());
-    if (errors.length > 0) {
-      const status = 400;
-      res.status(status).send({ status, errors });
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { limit, sort, company_tickers } = req.query as PercentChangeDayRequest;
-        const results = await this.apiService.percentChangeDay(limit, sort, parseCompanyTickers(company_tickers));
-        res.send(results);
+        const { limit, sort, companyTickers } = req.query as PercentChangeDayQuery;
+        const request = new PercentChangeDayRequest(limit, sort, companyTickers);
+        const response = await this.apiService.percentChangeDay(request);
+
+        res.send(response);
       } catch (err) {
         console.error(err.message);
-        res.status(500).send({errors: ["Internal Server Error."]});
+        res.status(500).send({ errors: ["Internal Server Error."]});
       }
     }
-  
+
     next();
   }
 }

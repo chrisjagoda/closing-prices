@@ -1,22 +1,29 @@
 import ApiServiceInterface from "./api.service.interface";
 import connection from "../database/database";
-import { StockPrice, PercentChangeDay, AverageClosingPrice } from "types";
+import {
+  AverageClosingPriceRequest, AverageClosingPriceResponse,
+  PercentChangeDayRequest, PercentChangeDayResponse,
+  SearchRequest, SearchResponse
+} from "../models/";
+import { AverageClosingPrice, PercentChangeDay, StockPrice } from "types";
 
 export default class ApiService implements ApiServiceInterface {
   /**
    * Get stock info
    */
-  async search(fields: string, by: string, sort: string, limit: number, date: string, company_tickers: string[]): Promise<Error | StockPrice[]> {
+  async search({ by, sort, limit, date, companyTickers, fields }: SearchRequest): Promise<Error | SearchResponse> {
     const queryBuilder = connection<StockPrice>("stock_price");
     const where: any = {};
 
     if (date) {
       where.date = date;
     }
-    if (company_tickers.length === 1) {
-      where.company_ticker = company_tickers[0];
-    } else if (company_tickers.length > 1) {
-      queryBuilder.whereIn("company_ticker", company_tickers);
+    if (companyTickers) {
+      if (companyTickers.length === 1) {
+        where.company_ticker = companyTickers[0];
+      } else {
+        queryBuilder.whereIn("company_ticker", companyTickers);
+      }
     }
     if (Object.keys(where).length > 0) {
       queryBuilder.where(where);
@@ -25,22 +32,24 @@ export default class ApiService implements ApiServiceInterface {
       queryBuilder.limit(limit);
     }
     if (by) {
-      queryBuilder.orderBy(by, sort || "ASC");
+      queryBuilder.orderBy(by, sort);
     }
 
-    return await queryBuilder.select(fields || "*");
-  };
+    return new SearchResponse(await queryBuilder.select(fields));
+  }
 
   /**
    * Get average closing price over a period of time
    */
-  async averageClosingPrice(start: string, end: string, company_tickers: string[]): Promise<Error | AverageClosingPrice> {
-    const queryBuilder = connection<StockPrice>("stock_price");
+  async averageClosingPrice({ start, end, companyTickers }: AverageClosingPriceRequest): Promise<Error | AverageClosingPriceResponse> {
+    const queryBuilder = connection<AverageClosingPrice>("stock_price");
 
-    if (company_tickers.length === 1) {
-      queryBuilder.where("company_ticker", company_tickers[0]);
-    } else if (company_tickers.length > 1) {
-      queryBuilder.whereIn("company_ticker", company_tickers);
+    if (companyTickers) {
+      if (companyTickers.length === 1) {
+        queryBuilder.where("company_ticker", companyTickers[0]);
+      } else {
+        queryBuilder.whereIn("company_ticker", companyTickers);
+      }
     }
 
     return await queryBuilder
@@ -48,21 +57,23 @@ export default class ApiService implements ApiServiceInterface {
       .andWhere("date", ">=", start)
       .andWhere("date", "<=", end)
       .select("");
-  };
+  }
 
   /**
    * Get stock closing price percent change from one day to next
    */
-  async percentChangeDay(limit: number, sort: string, company_tickers: string[]): Promise<Error | PercentChangeDay[]> {
+  async percentChangeDay({ limit, sort, companyTickers }: PercentChangeDayRequest): Promise<Error | PercentChangeDayResponse> {
     let where = "";
 
-    if (company_tickers.length === 1) {
-      where = `WHERE company_ticker = '${company_tickers[0]}'`;
-    } else if (company_tickers.length > 1) {
-      where = `WHERE company_ticker IN ('${company_tickers.join("','")}')`;
+    if (companyTickers) {
+      if (companyTickers.length === 1) {
+        where = `WHERE company_ticker = '${companyTickers[0]}'`;
+      } else {
+        where = `WHERE company_ticker IN ('${companyTickers.join("','")}')`;
+      }
     }
 
-    return await connection.raw(`
+    return new PercentChangeDayResponse(await connection.raw<PercentChangeDay[]>(`
       SELECT
         start_date startDate,
         end_date endDate,
@@ -76,6 +87,6 @@ export default class ApiService implements ApiServiceInterface {
       GROUP BY startDate
       ORDER BY percentChangeDay ?
       LIMIT ?;
-    `, [connection.raw(sort), limit]);
-  };
+    `, [connection.raw(sort), limit]));
+  }
 }

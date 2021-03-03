@@ -1,11 +1,16 @@
-import { AverageClosingPrice, PercentChangeDay, StockPrice } from "types";
+import { PercentChangeDay } from "types";
+import { 
+  AverageClosingPriceRequest, AverageClosingPriceResponse,
+  PercentChangeDayRequest, PercentChangeDayResponse,
+  SearchRequest, SearchResponse,
+} from "../models";
 
 interface ApiServiceInterface {
-    search(fields: string, by: string, sort: string, limit: number, date: string, company_tickers: string[]): Promise<Error | StockPrice[]>;
+    search(request: SearchRequest): Promise<Error | SearchResponse>;
 
-    averageClosingPrice(start: string, end: string, company_tickers: string[]): Promise<Error | AverageClosingPrice>;
+    averageClosingPrice(request: AverageClosingPriceRequest): Promise<Error | AverageClosingPriceResponse>;
 
-    percentChangeDay(limit: number, sort: string, company_tickers: string[]): Promise<Error | PercentChangeDay[]>;
+    percentChangeDay(request: PercentChangeDayRequest): Promise<Error | PercentChangeDayResponse>;
 }
 
 export default ApiServiceInterface;

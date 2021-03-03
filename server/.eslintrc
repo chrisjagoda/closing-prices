@@ -17,6 +17,6 @@
       }
     ],
     "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/camelcase": "warn"
+    "@typescript-eslint/camelcase": "off"
   }
 }

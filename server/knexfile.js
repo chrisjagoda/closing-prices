@@ -4,6 +4,13 @@ dotenv.config();
 
 module.exports = {
 
+  test: {
+    client: process.env.DATABASE_CLIENT,
+    connection: {
+      filename: ":memory"
+    }
+  },
+
   development: {
     client: process.env.DATABASE_CLIENT,
     connection: {

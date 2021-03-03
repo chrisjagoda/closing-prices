@@ -2,36 +2,14 @@ import request from "supertest";
 
 import App from "../src/app";
 import connection from "../src/database/database";
+import { initial_001 } from "../migrations";
 
 let server: App;
 
 beforeAll(async () => {
   server = new App();
 
-  await connection.schema.createTableIfNotExists("stock_price", (table: any) => {
-    table.increments();
-    table.string("company_ticker");
-    table.string("date");
-    table.float("closing_price");
-  });
-
-  await connection.schema.raw(`
-    CREATE VIEW IF NOT EXISTS percent_change_day AS
-    SELECT
-      date start_date,
-      LEAD (date, 1) OVER w end_date,
-      company_ticker,
-      closing_price start_closing_price,
-      LEAD (closing_price, 1) OVER w end_closing_price,
-      (LEAD (closing_price, 1) OVER w - closing_price) / closing_price percent_change_day
-    FROM
-      stock_price
-    WINDOW w AS (
-      PARTITION BY company_ticker
-      ORDER BY date
-    )
-    ORDER BY date, company_ticker ASC;
-  `);
+  await initial_001.up(connection);
 
   await connection("stock_price").insert([
     {company_ticker: "AAPL", date: "1999-01-04", closing_price: 15.25},
@@ -74,8 +52,8 @@ describe("GET /api/v1/search", () => {
     request(server.app).get("/api/v1/search")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
-        expect(body.length).toEqual(25);
+        const results = body.stockPrices;
+        expect(results.length).toEqual(25);
         done();
       });
   });
@@ -84,8 +62,9 @@ describe("GET /api/v1/search", () => {
     request(server.app).get("/api/v1/search?by=date&fields=date&sort=asc&limit=1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toEqual(1);
-        expect(body[0]).toEqual({ date: "1999-01-04"});
+        const results = body.stockPrices;
+        expect(results.length).toEqual(1);
+        expect(results[0]).toEqual({ date: "1999-01-04"});
         done();
       });
   });
@@ -94,8 +73,9 @@ describe("GET /api/v1/search", () => {
     request(server.app).get("/api/v1/search?by=date&fields=date&sort=desc&limit=1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toEqual(1);
-        expect(body[0]).toEqual({ date: "1999-01-08"});
+        const results = body.stockPrices;
+        expect(results.length).toEqual(1);
+        expect(results[0]).toEqual({ date: "1999-01-08"});
         done();
       });
   });

@@ -6,7 +6,6 @@ import connection from "../src/database/database";
 let server: App;
 
 beforeAll(async () => {
-  console.log("once");
   server = new App();
 
   await connection.schema.createTableIfNotExists("stock_price", (table: any) => {

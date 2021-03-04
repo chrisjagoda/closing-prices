@@ -6,7 +6,7 @@ import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } fr
 import { AverageClosingPriceQuery, PercentChangeDayQuery, SearchQuery } from "types";
 
 export default class ApiController {
-  private apiService: ApiService;
+  private apiService!: ApiService;
 
   constructor() {
     this.apiService = new ApiService();

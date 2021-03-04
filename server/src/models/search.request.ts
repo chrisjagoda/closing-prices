@@ -6,7 +6,7 @@ export default class SearchRequest {
   date?: string;
   limit?: number;
   companyTickers?: string[];
-  fields: string | string[];
+  fields!: string | string[];
 
   constructor(by?: string, sort?: string, date?: string, limit?: number, companyTickers?: string, fields?: string) {
     this.by = by;

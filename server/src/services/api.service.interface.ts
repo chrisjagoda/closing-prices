@@ -1,16 +1,10 @@
-import { PercentChangeDay } from "types";
-import { 
-  AverageClosingPriceRequest, AverageClosingPriceResponse,
-  PercentChangeDayRequest, PercentChangeDayResponse,
-  SearchRequest, SearchResponse,
-} from "../models";
+import { AverageClosingPriceRequest, PercentChangeDayRequest, SearchRequest } from "../interfaces/requests";
+import { AverageClosingPrice, StockPrice, PercentChangeDay } from "../interfaces/models";
 
 interface ApiServiceInterface {
-    search(request: SearchRequest): Promise<Error | SearchResponse>;
-
-    averageClosingPrice(request: AverageClosingPriceRequest): Promise<Error | AverageClosingPriceResponse>;
-
-    percentChangeDay(request: PercentChangeDayRequest): Promise<Error | PercentChangeDayResponse>;
+  search(request: SearchRequest): Promise<StockPrice[]>;
+  averageClosingPrice(request: AverageClosingPriceRequest): Promise<AverageClosingPrice>;
+  percentChangeDay(request: PercentChangeDayRequest): Promise<PercentChangeDay[]>;
 }
 
 export default ApiServiceInterface;

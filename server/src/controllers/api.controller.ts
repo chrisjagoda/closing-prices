@@ -2,11 +2,11 @@ import { Response, Request, NextFunction } from "express";
 import { validationResult } from "express-validator";
 
 import ApiService from "../services/api.service";
-import { SearchRequest, AverageClosingPriceRequest, PercentChangeDayRequest } from "../models/";
-import { AverageClosingPriceQuery, PercentChangeDayQuery, SearchQuery } from "types";
+import { AverageClosingPriceRequest, PercentChangeDayRequest, SearchRequest } from "../interfaces/requests";
+import { AverageClosingPriceResponse, PercentChangeDayResponse, SearchResponse } from "../interfaces/responses";
 
 export default class ApiController {
-  private apiService!: ApiService;
+  private apiService: ApiService;
 
   constructor() {
     this.apiService = new ApiService();
@@ -23,9 +23,11 @@ export default class ApiController {
       res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { by, sort, date, limit, companyTickers, fields } = req.query as SearchQuery;
-        const request = new SearchRequest(by, sort, date, limit, companyTickers, fields);
-        const response = await this.apiService.search(request);
+        const { fields, orderBy, sort, page, pageSize, date, companyTickers } = req.query as SearchRequest;
+        const response = <SearchResponse>{
+          pagination: { page, pageSize },
+          stockPrices: await this.apiService.search({ fields, orderBy, sort, page, pageSize, date, companyTickers })
+        };
 
         res.send(response);
       } catch (err) {
@@ -48,9 +50,8 @@ export default class ApiController {
       res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { start, end, companyTickers } = req.query as AverageClosingPriceQuery;
-        const request = new AverageClosingPriceRequest(start, end, companyTickers);
-        const response = await this.apiService.averageClosingPrice(request);
+        const { start, end, companyTickers } = req.query as AverageClosingPriceRequest;
+        const response = <AverageClosingPriceResponse>await this.apiService.averageClosingPrice({ start, end, companyTickers });
 
         res.send(response);
       } catch (err) {
@@ -73,9 +74,11 @@ export default class ApiController {
       res.status(400).send({ errors: errors.array() });
     } else {
       try {
-        const { limit, sort, companyTickers } = req.query as PercentChangeDayQuery;
-        const request = new PercentChangeDayRequest(limit, sort, companyTickers);
-        const response = await this.apiService.percentChangeDay(request);
+        const { sort, page, pageSize, companyTickers } = req.query as PercentChangeDayRequest;
+        const response = <PercentChangeDayResponse>{
+          pagination: { page, pageSize },
+          percentChangeDays: await this.apiService.percentChangeDay({ sort, page, pageSize, companyTickers })
+        };
 
         res.send(response);
       } catch (err) {

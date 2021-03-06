@@ -1,10 +1,6 @@
-export interface SearchQuery {
-  by?: string;
-  sort?: string;
-  date?: string;
-  limit?: number;
-  companyTickers?: string;
-  fields?: string;
+export interface Pagination {
+  page: number;
+  pageSize: number;
 }
 
 export interface StockPrice {
@@ -13,20 +9,8 @@ export interface StockPrice {
   date?: string;
 }
 
-export interface AverageClosingPriceQuery {
-  start?: string;
-  end?: string;
-  companyTickers?: string;
-}
-
 export interface AverageClosingPrice {
   averageClosingPrice: number;
-}
-
-export interface PercentChangeDayQuery {
-  limit?: number;
-  sort?: string;
-  companyTickers?: string;
 }
 
 export interface PercentChangeDay {

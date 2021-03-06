@@ -1,7 +1,7 @@
 import request from "supertest";
 
 import App from "../src/app";
-import connection from "../src/database/database";
+import connection from "../src/database";
 import { initial_001 } from "../migrations";
 
 let server: App;
@@ -59,7 +59,7 @@ describe("GET /api/v1/search", () => {
   });
 
   test("should return first date represented in results", (done) => {
-    request(server.app).get("/api/v1/search?by=date&fields=date&sort=asc&limit=1")
+    request(server.app).get("/api/v1/search?orderBy=date&fields=date&sort=asc&page=1&pageSize=1")
       .expect(200)
       .then(({ body }) => {
         const results = body.stockPrices;
@@ -70,7 +70,7 @@ describe("GET /api/v1/search", () => {
   });
 
   test("should return last date represented in results", (done) => {
-    request(server.app).get("/api/v1/search?by=date&fields=date&sort=desc&limit=1")
+    request(server.app).get("/api/v1/search?orderBy=date&fields=date&sort=desc&page=1&pageSize=1")
       .expect(200)
       .then(({ body }) => {
         const results = body.stockPrices;

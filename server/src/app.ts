@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import compression from "compression";
 
 import ApiController from "./controllers/api.controller";
-import * as apiValidator from "./validators/api.validator";
+import { AverageClosingPriceSchema, PercentChangeDaySchema, SearchSchema } from "./schemas";
 
 export default class App {
   app: Application;
@@ -23,8 +23,8 @@ export default class App {
    * API routes.
    */
   initializeRoutes() {
-    this.app.get("/api/v1/search", apiValidator.search, this.apiController.search);
-    this.app.get("/api/v1/averageClosingPrice", apiValidator.averageClosingPrice, this.apiController.averageClosingPrice);
-    this.app.get("/api/v1/percentChangeDay", apiValidator.percentChangeDay, this.apiController.percentChangeDay);
+    this.app.get("/api/v1/search", SearchSchema, this.apiController.search);
+    this.app.get("/api/v1/averageClosingPrice", AverageClosingPriceSchema, this.apiController.averageClosingPrice);
+    this.app.get("/api/v1/percentChangeDay", PercentChangeDaySchema, this.apiController.percentChangeDay);
   }
 }

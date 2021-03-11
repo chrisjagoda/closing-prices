@@ -1,8 +1,15 @@
-{
+module.exports = {
+  "root": true,
   "parser": "@typescript-eslint/parser",
-  "extends": ["plugin:@typescript-eslint/recommended"],
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
   "parserOptions": {
-    "ecmaVersion": 2019,
+    "ecmaVersion": 2020,
     "sourceType": "module"
   },
   "rules": {
@@ -19,4 +26,4 @@
     "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/camelcase": "off"
   }
-}
+};

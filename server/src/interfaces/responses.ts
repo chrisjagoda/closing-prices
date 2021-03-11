@@ -1,6 +1,12 @@
-import { AverageClosingPrice, Pagination, PercentChangeDay, StockPrice } from "./models";
+import { AverageClosingPrice, PercentChangeDay, StockPrice } from "./models";
 
-interface PageableResponse {
+export interface Pagination {
+  page: number;
+  pageCount: number;
+  pageSize: number;
+}
+
+export interface PageableResponse {
   pagination: Pagination;
 }
 

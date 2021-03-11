@@ -1,11 +1,12 @@
 
 exports.up = async function(knex) {
-  await knex.schema.createTableIfNotExists("stock_price", table => {
-    table.increments();
-    table.float("closing_price");
-    table.string("company_ticker");
-    table.string("date");
-  });
+  if (!await knex.schema.hasTable("stock_price")) {
+    await knex.schema.createTable("stock_price", table => {
+      table.float("closing_price");
+      table.string("company_ticker");
+      table.string("date");
+    });
+  }
 
   await knex.schema.raw(`
     CREATE VIEW IF NOT EXISTS change_day AS

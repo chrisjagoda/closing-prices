@@ -24,10 +24,7 @@ export default class ApiController {
     } else {
       try {
         const { fields, orderBy, sort, page, pageSize, date, companyTickers } = req.query as SearchRequest;
-        const response = <SearchResponse>{
-          pagination: { page, pageSize },
-          stockPrices: await this.apiService.search({ fields, orderBy, sort, page, pageSize, date, companyTickers })
-        };
+        const response = await this.apiService.search({ fields, orderBy, sort, page, pageSize, date, companyTickers });
 
         res.send(response);
       } catch (err) {
@@ -51,7 +48,7 @@ export default class ApiController {
     } else {
       try {
         const { start, end, companyTickers } = req.query as AverageClosingPriceRequest;
-        const response = <AverageClosingPriceResponse>await this.apiService.averageClosingPrice({ start, end, companyTickers });
+        const response = await this.apiService.averageClosingPrice({ start, end, companyTickers });
 
         res.send(response);
       } catch (err) {
@@ -75,10 +72,7 @@ export default class ApiController {
     } else {
       try {
         const { sort, page, pageSize, companyTickers } = req.query as PercentChangeDayRequest;
-        const response = <PercentChangeDayResponse>{
-          pagination: { page, pageSize },
-          percentChangeDays: await this.apiService.percentChangeDay({ sort, page, pageSize, companyTickers })
-        };
+        const response = await this.apiService.percentChangeDay({ sort, page, pageSize, companyTickers });
 
         res.send(response);
       } catch (err) {

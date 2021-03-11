@@ -8,14 +8,16 @@ module.exports = {
     client: process.env.DATABASE_CLIENT,
     connection: {
       filename: ":memory"
-    }
+    },
+    useNullAsDefault: process.env.DATABASE_USE_NULL_AS_DEFAULT
   },
 
   development: {
     client: process.env.DATABASE_CLIENT,
     connection: {
       filename: process.env.DATABASE_FILENAME
-    }
+    },
+    useNullAsDefault: process.env.DATABASE_USE_NULL_AS_DEFAULT 
   },
 
   staging: {
